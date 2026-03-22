@@ -61,20 +61,6 @@
         font-size: 1rem;
     }
 
-    tr.gold {
-        background: #bfa100 !important;
-        color: #000;
-    }
-
-    tr.silver {
-        background: #9ca3af !important;
-        color: #000;
-    }
-
-    tr.bronze {
-        background: #b45309 !important;
-    }
-
     .error {
         color: #f87171;
         margin-top: 20px;
@@ -147,10 +133,6 @@ function displayLeaderboard(teams) {
 
     teams.forEach(team => {
         const tr = document.createElement('tr');
-
-        if (team.rank === 1) tr.classList.add('gold');
-        else if (team.rank === 2) tr.classList.add('silver');
-        else if (team.rank === 3) tr.classList.add('bronze');
 
         tr.innerHTML = `
             <td>${team.rank}</td>
