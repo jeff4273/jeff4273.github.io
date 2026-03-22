@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRC Quality Awards Leaderboard</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        color: #f1f5f9;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    h1 {
+        margin-bottom: 5px;
+    }
+
+    .subtitle {
+        color: #94a3b8;
+        margin-bottom: 20px;
+    }
+
+    .file-input {
+        margin-bottom: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #1e293b;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th, td {
+        padding: 12px 15px;
+    }
+
+    th {
+        background: #334155;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+    }
+
+    tr:nth-child(even) {
+        background: #273549;
+    }
+
+    tr:hover {
+        background: #3b4a63;
+        transition: 0.2s;
+    }
+
+    td {
+        font-size: 1rem;
+    }
+
+    tr.gold {
+        background: #bfa100 !important;
+        color: #000;
+    }
+
+    tr.silver {
+        background: #9ca3af !important;
+        color: #000;
+    }
+
+    tr.bronze {
+        background: #b45309 !important;
+    }
+
+    .note {
+        margin-top: 15px;
+        font-size: 0.85rem;
+        color: #94a3b8;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🏆 FRC Quality Awards Leaderboard</h1>
+    <p class="subtitle">Upload a CSV or use default data</p>
+
+    <input type="file" id="csvFile" class="file-input" accept=".csv">
+
+    <table id="leaderboard">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Team</th>
+                <th>Awards</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <p class="note">CSV format: Rank, Team, Number of awards</p>
+</div>
+
+<script>
+function parseCSV(text) {
+    const rows = text.trim().split('\n').slice(1);
+    let teams = [];
+
+    rows.forEach(row => {
+        const [rank, team, awards] = row.split(',');
+
+        if (team && awards) {
+            teams.push({
+                team: team.trim(),
+                awards: parseInt(awards.trim())
+            });
+        }
+    });
+
+    return teams.sort((a, b) => b.awards - a.awards);
+}
+
+function displayLeaderboard(teams) {
+    const tbody = document.querySelector('#leaderboard tbody');
+    tbody.innerHTML = '';
+
+    teams.forEach((team, index) => {
+        const tr = document.createElement('tr');
+
+        if (index === 0) tr.classList.add('gold');
+        else if (index === 1) tr.classList.add('silver');
+        else if (index === 2) tr.classList.add('bronze');
+
+        tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${team.team}</td>
+            <td>${team.awards}</td>
+        `;
+
+        tbody.appendChild(tr);
+    });
+}
+
+// Default sample data
+const defaultCSV = `Rank,Team,Number of awards
+1,Team 254,12
+2,Team 1114,10
+3,Team 2056,9
+4,Team 1678,8
+5,Team 3937,5
+`;
+
+displayLeaderboard(parseCSV(defaultCSV));
+
+// File upload handler
+document.getElementById('csvFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const teams = parseCSV(event.target.result);
+        displayLeaderboard(teams);
+    };
+
+    reader.readAsText(file);
+});
+</script>
+
+</body>
+</html>
