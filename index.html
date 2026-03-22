@@ -129,30 +129,31 @@ function parseCSV(text) {
     rows.forEach(row => {
         const [rank, team, awards] = row.split(',');
 
-        if (team && awards) {
+        if (rank && team && awards) {
             teams.push({
+                rank: parseInt(rank.trim()),
                 team: team.trim(),
                 awards: parseInt(awards.trim())
             });
         }
     });
 
-    return teams.sort((a, b) => b.awards - a.awards);
+    return teams; // Already sorted in CSV, no need to sort
 }
 
 function displayLeaderboard(teams) {
     const tbody = document.querySelector('#leaderboard tbody');
     tbody.innerHTML = '';
 
-    teams.forEach((team, index) => {
+    teams.forEach(team => {
         const tr = document.createElement('tr');
 
-        if (index === 0) tr.classList.add('gold');
-        else if (index === 1) tr.classList.add('silver');
-        else if (index === 2) tr.classList.add('bronze');
+        if (team.rank === 1) tr.classList.add('gold');
+        else if (team.rank === 2) tr.classList.add('silver');
+        else if (team.rank === 3) tr.classList.add('bronze');
 
         tr.innerHTML = `
-            <td>${index + 1}</td>
+            <td>${team.rank}</td>
             <td>${team.team}</td>
             <td>${team.awards}</td>
         `;
