@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red vs Blue Statistics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .year-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .year-card h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .stat-value {
+            color: #667eea;
+            font-weight: 700;
+        }
+        
+        .overall-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-top: 5px solid #f39c12;
+        }
+        
+        .overall-card h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        
+        .overall-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .stat-block {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+        
+        .stat-block h3 {
+            color: #555;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-block p {
+            color: #667eea;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔴 Red vs 🔵 Blue</h1>
+        
+        <div class="stats-grid" id="yearStats">
+            <!-- Year statistics will be inserted here -->
+        </div>
+        
+        <div class="overall-card">
+            <h2>Overall Statistics</h2>
+            <div class="overall-grid" id="overallStats">
+                <!-- Overall statistics will be inserted here -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // CSV data parsing and statistics calculation
+        async function loadAndProcess() {
+            try {
+                const response = await fetch('red_vs_blue.csv');
+                const csvText = await response.text();
+                const lines = csvText.trim().split('\n');
+                
+                const data = {};
+                const overall = { red_wins: 0, blue_wins: 0, ties: 0 };
+                
+                lines.slice(1).forEach(line => {
+                    const [year, red, blue, tie] = line.split(',');
+                    const y = year.trim();
+                    const r = parseInt(red);
+                    const b = parseInt(blue);
+                    const t = parseInt(tie);
+                    
+                    data[y] = { red: r, blue: b, tie: t };
+                    overall.red_wins += r;
+                    overall.blue_wins += b;
+                    overall.ties += t;
+                });
+                
+                renderYearStats(data);
+                renderOverallStats(overall);
+            } catch (error) {
+                console.error('Error loading CSV:', error);
+            }
+        }
+        
+        function renderYearStats(data) {
+            const container = document.getElementById('yearStats');
+            Object.entries(data).forEach(([year, stats]) => {
+                const winner = stats.red > stats.blue ? '🔴 Red' : '🔵 Blue';
+                const tieColor = stats.tie > (stats.red + stats.blue) / 2 ? 'High' : 'Low';
+                
+                container.innerHTML += `
+                    <div class="year-card">
+                        <h2>${year}</h2>
+                        <div class="stat-row">
+                            <span class="stat-label">Most Winning Color:</span>
+                            <span class="stat-value">${winner}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Most Losing Color:</span>
+                            <span class="stat-value">${stats.red < stats.blue ? '🔴 Red' : '🔵 Blue'}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Tie Frequency:</span>
+                            <span class="stat-value">${stats.tie} ties</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        function renderOverallStats(overall) {
+            const container = document.getElementById('overallStats');
+            const total = overall.red_wins + overall.blue_wins + overall.ties;
+            
+            container.innerHTML = `
+                <div class="stat-block">
+                    <h3>Most Wins</h3>
+                    <p>${overall.red_wins > overall.blue_wins ? '🔴 Red' : '🔵 Blue'}</p>
+                </div>
+                <div class="stat-block">
+                    <h3>Total Ties</h3>
+                    <p>${overall.ties}</p>
+                </div>
+                <div class="stat-block">
+                    <h3>Red Win Rate</h3>
+                    <p>${((overall.red_wins / total) * 100).toFixed(1)}%</p>
+                </div>
+                <div class="stat-block">
+                    <h3>Blue Win Rate</h3>
+                    <p>${((overall.blue_wins / total) * 100).toFixed(1)}%</p>
+                </div>
+            `;
+        }
+        
+        loadAndProcess();
+    </script>
+</body>
+</html>

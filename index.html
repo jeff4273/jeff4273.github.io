@@ -1,151 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FRC Quality Awards Leaderboard</title>
-
-<style>
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #0f172a, #1e293b);
-        color: #f1f5f9;
-    }
-
-    .container {
-        max-width: 900px;
-        margin: 50px auto;
-        padding: 20px;
-        text-align: center;
-    }
-
-    h1 {
-        margin-bottom: 5px;
-    }
-
-    .subtitle {
-        color: #94a3b8;
-        margin-bottom: 30px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #1e293b;
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    th, td {
-        padding: 12px 15px;
-    }
-
-    th {
-        background: #334155;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 1px;
-    }
-
-    tr:nth-child(even) {
-        background: #273549;
-    }
-
-    tr:hover {
-        background: #3b4a63;
-        transition: 0.2s;
-    }
-
-    td {
-        font-size: 1rem;
-    }
-
-    .error {
-        color: #f87171;
-        margin-top: 20px;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breakaway Facts</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .nav-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .nav-button:hover {
+            background: #764ba2;
+        }
+    </style>
 </head>
-
 <body>
-
-<div class="container">
-    <h1>🏆 FRC Quality Awards Leaderboard</h1>
-    <p class="subtitle">Ranking teams by total quality awards</p>
-
-    <table id="leaderboard">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Team</th>
-                <th>Awards</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-
-    <p id="error" class="error"></p>
-</div>
-
-<script>
-async function loadCSV() {
-    try {
-        const response = await fetch('data.csv');
-
-        if (!response.ok) {
-            throw new Error("Could not load data.csv");
-        }
-
-        const text = await response.text();
-        const teams = parseCSV(text);
-        displayLeaderboard(teams);
-
-    } catch (err) {
-        document.getElementById('error').textContent =
-            "Error loading CSV. Make sure data.csv is in the repo root.";
-        console.error(err);
-    }
-}
-
-function parseCSV(text) {
-    const rows = text.trim().split('\n').slice(1);
-    let teams = [];
-
-    rows.forEach(row => {
-        const [rank, team, awards] = row.split(',');
-
-        if (rank && team && awards) {
-            teams.push({
-                rank: parseInt(rank.trim()),
-                team: team.trim(),
-                awards: parseInt(awards.trim())
-            });
-        }
-    });
-
-    return teams; // Already sorted in CSV, no need to sort
-}
-
-function displayLeaderboard(teams) {
-    const tbody = document.querySelector('#leaderboard tbody');
-    tbody.innerHTML = '';
-
-    teams.forEach(team => {
-        const tr = document.createElement('tr');
-
-        tr.innerHTML = `
-            <td>${team.rank}</td>
-            <td>${team.team}</td>
-            <td>${team.awards}</td>
-        `;
-
-        tbody.appendChild(tr);
-    });
-}
-
-loadCSV();
-</script>
-
+    <div class="container">
+        <h1>Breakaway Facts</h1>
+        <div class="button-group">
+            <a href="quality.html" class="nav-button">Quality</a>
+            <a href="redVSblue.html" class="nav-button">Red vs Blue</a>
+        </div>
+    </div>
 </body>
 </html>
