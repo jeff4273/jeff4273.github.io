@@ -146,10 +146,8 @@
                 const overall = {
                     redWins: 0,
                     redLosses: 0,
-                    redTies: 0,
                     blueWins: 0,
-                    blueLosses: 0,
-                    blueTies: 0
+                    blueLosses: 0
                 };
                 
                 const requiredHeaders = ['year', 'redWins', 'redLosses', 'redTies', 'blueWins', 'blueLosses', 'blueTies'];
@@ -165,26 +163,20 @@
                     const y = cols[getIndex('year')];
                     const redWins = parseInt(cols[getIndex('redWins')], 10) || 0;
                     const redLosses = parseInt(cols[getIndex('redLosses')], 10) || 0;
-                    const redTies = parseInt(cols[getIndex('redTies')], 10) || 0;
                     const blueWins = parseInt(cols[getIndex('blueWins')], 10) || 0;
                     const blueLosses = parseInt(cols[getIndex('blueLosses')], 10) || 0;
-                    const blueTies = parseInt(cols[getIndex('blueTies')], 10) || 0;
                     
                     data[y] = {
                         redWins,
                         redLosses,
-                        redTies,
                         blueWins,
-                        blueLosses,
-                        blueTies
+                        blueLosses
                     };
                     
                     overall.redWins += redWins;
                     overall.redLosses += redLosses;
-                    overall.redTies += redTies;
                     overall.blueWins += blueWins;
                     overall.blueLosses += blueLosses;
-                    overall.blueTies += blueTies;
                 });
                 
                 renderYearStats(data);
@@ -214,10 +206,6 @@
                             <span class="stat-label">🔵 Blue Matches (W/L):</span>
                             <span class="stat-value">${stats.blueWins} / ${stats.blueLosses}</span>
                         </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Ties:</span>
-                            <span class="stat-value">${stats.redTies}</span>
-                        </div>
                     </div>
                 `;
             });
@@ -227,7 +215,6 @@
             const container = document.getElementById('overallStats');
             const redTotal = overall.redWins + overall.redLosses;
             const blueTotal = overall.blueWins + overall.blueLosses;
-            const totalTies = Math.max(overall.redTies, overall.blueTies);
             
             container.innerHTML = `
                 <div class="stat-block">
@@ -237,10 +224,6 @@
                 <div class="stat-block">
                     <h3>🔵 Blue Total (W/L)</h3>
                     <p>${overall.blueWins} / ${overall.blueLosses}</p>
-                </div>
-                <div class="stat-block">
-                    <h3>Total Ties</h3>
-                    <p>${totalTies}</p>
                 </div>
                 <div class="stat-block">
                     <h3>Red Win Rate</h3>

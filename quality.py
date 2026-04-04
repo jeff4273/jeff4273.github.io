@@ -2,7 +2,7 @@ import requests
 import csv
 import time
 
-API_KEY = "F5CQwbGuceE3Zc5d97Gm0VEuzdXoLqrbkYbThdSd3HlaKEEWZ2y7wejsnBzgVCGY"
+API_KEY = ""
 BASE_URL = "https://www.thebluealliance.com/api/v3"
 
 HEADERS = {

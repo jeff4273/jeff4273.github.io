@@ -3,7 +3,7 @@ import csv
 
 
 BASE_URL = "https://www.thebluealliance.com/api/v3"
-API_KEY = "F5CQwbGuceE3Zc5d97Gm0VEuzdXoLqrbkYbThdSd3HlaKEEWZ2y7wejsnBzgVCGY"
+API_KEY = ""
 team = "frc3937"
 
 HEADERS = {
