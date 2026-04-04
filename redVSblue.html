@@ -139,21 +139,52 @@
                 const response = await fetch('red_vs_blue.csv');
                 const csvText = await response.text();
                 const lines = csvText.trim().split('\n');
+                const headers = lines[0].split(',').map(h => h.trim());
+                const getIndex = name => headers.indexOf(name);
                 
                 const data = {};
-                const overall = { red_wins: 0, blue_wins: 0, ties: 0 };
+                const overall = {
+                    redWins: 0,
+                    redLosses: 0,
+                    redTies: 0,
+                    blueWins: 0,
+                    blueLosses: 0,
+                    blueTies: 0
+                };
+                
+                const requiredHeaders = ['year', 'redWins', 'redLosses', 'redTies', 'blueWins', 'blueLosses', 'blueTies'];
+                const hasAllHeaders = requiredHeaders.every(header => getIndex(header) !== -1);
+                if (!hasAllHeaders) {
+                    throw new Error('CSV format mismatch. Expected headers: year, redWins, redLosses, redTies, blueWins, blueLosses, blueTies');
+                }
                 
                 lines.slice(1).forEach(line => {
-                    const [year, red, blue, tie] = line.split(',');
-                    const y = year.trim();
-                    const r = parseInt(red);
-                    const b = parseInt(blue);
-                    const t = parseInt(tie);
+                    if (!line.trim()) return;
                     
-                    data[y] = { red: r, blue: b, tie: t };
-                    overall.red_wins += r;
-                    overall.blue_wins += b;
-                    overall.ties += t;
+                    const cols = line.split(',').map(col => col.trim());
+                    const y = cols[getIndex('year')];
+                    const redWins = parseInt(cols[getIndex('redWins')], 10) || 0;
+                    const redLosses = parseInt(cols[getIndex('redLosses')], 10) || 0;
+                    const redTies = parseInt(cols[getIndex('redTies')], 10) || 0;
+                    const blueWins = parseInt(cols[getIndex('blueWins')], 10) || 0;
+                    const blueLosses = parseInt(cols[getIndex('blueLosses')], 10) || 0;
+                    const blueTies = parseInt(cols[getIndex('blueTies')], 10) || 0;
+                    
+                    data[y] = {
+                        redWins,
+                        redLosses,
+                        redTies,
+                        blueWins,
+                        blueLosses,
+                        blueTies
+                    };
+                    
+                    overall.redWins += redWins;
+                    overall.redLosses += redLosses;
+                    overall.redTies += redTies;
+                    overall.blueWins += blueWins;
+                    overall.blueLosses += blueLosses;
+                    overall.blueTies += blueTies;
                 });
                 
                 renderYearStats(data);
@@ -166,8 +197,7 @@
         function renderYearStats(data) {
             const container = document.getElementById('yearStats');
             Object.entries(data).forEach(([year, stats]) => {
-                const winner = stats.red > stats.blue ? '🔴 Red' : '🔵 Blue';
-                const tieColor = stats.tie > (stats.red + stats.blue) / 2 ? 'High' : 'Low';
+                const winner = stats.redWins > stats.blueWins ? '🔴 Red' : stats.blueWins > stats.redWins ? '🔵 Blue' : 'Tie';
                 
                 container.innerHTML += `
                     <div class="year-card">
@@ -177,12 +207,16 @@
                             <span class="stat-value">${winner}</span>
                         </div>
                         <div class="stat-row">
-                            <span class="stat-label">Most Losing Color:</span>
-                            <span class="stat-value">${stats.red < stats.blue ? '🔴 Red' : '🔵 Blue'}</span>
+                            <span class="stat-label">🔴 Red Matches (W/L):</span>
+                            <span class="stat-value">${stats.redWins} / ${stats.redLosses}</span>
                         </div>
                         <div class="stat-row">
-                            <span class="stat-label">Tie Frequency:</span>
-                            <span class="stat-value">${stats.tie} ties</span>
+                            <span class="stat-label">🔵 Blue Matches (W/L):</span>
+                            <span class="stat-value">${stats.blueWins} / ${stats.blueLosses}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Ties:</span>
+                            <span class="stat-value">${stats.redTies}</span>
                         </div>
                     </div>
                 `;
@@ -191,24 +225,34 @@
         
         function renderOverallStats(overall) {
             const container = document.getElementById('overallStats');
-            const total = overall.red_wins + overall.blue_wins + overall.ties;
+            const redTotal = overall.redWins + overall.redLosses;
+            const blueTotal = overall.blueWins + overall.blueLosses;
+            const totalTies = Math.max(overall.redTies, overall.blueTies);
             
             container.innerHTML = `
                 <div class="stat-block">
-                    <h3>Most Wins</h3>
-                    <p>${overall.red_wins > overall.blue_wins ? '🔴 Red' : '🔵 Blue'}</p>
+                    <h3>🔴 Red Total (W/L)</h3>
+                    <p>${overall.redWins} / ${overall.redLosses}</p>
+                </div>
+                <div class="stat-block">
+                    <h3>🔵 Blue Total (W/L)</h3>
+                    <p>${overall.blueWins} / ${overall.blueLosses}</p>
                 </div>
                 <div class="stat-block">
                     <h3>Total Ties</h3>
-                    <p>${overall.ties}</p>
+                    <p>${totalTies}</p>
                 </div>
                 <div class="stat-block">
                     <h3>Red Win Rate</h3>
-                    <p>${((overall.red_wins / total) * 100).toFixed(1)}%</p>
+                    <p>${redTotal ? ((overall.redWins / redTotal) * 100).toFixed(1) : '0.0'}%</p>
                 </div>
                 <div class="stat-block">
                     <h3>Blue Win Rate</h3>
-                    <p>${((overall.blue_wins / total) * 100).toFixed(1)}%</p>
+                    <p>${blueTotal ? ((overall.blueWins / blueTotal) * 100).toFixed(1) : '0.0'}%</p>
+                </div>
+                <div class="stat-block">
+                    <h3>Most Wins</h3>
+                    <p>${overall.redWins > overall.blueWins ? '🔴 Red' : overall.blueWins > overall.redWins ? '🔵 Blue' : 'Tie'}</p>
                 </div>
             `;
         }
