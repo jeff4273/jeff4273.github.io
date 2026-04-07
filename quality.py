@@ -3,6 +3,8 @@ import csv
 import time
 
 API_KEY = ""
+with open("key.txt", "r") as f:
+    API_KEY = f.read().strip()
 BASE_URL = "https://www.thebluealliance.com/api/v3"
 
 HEADERS = {

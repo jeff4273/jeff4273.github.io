@@ -4,6 +4,8 @@ import csv
 
 BASE_URL = "https://www.thebluealliance.com/api/v3"
 API_KEY = ""
+with open("key.txt", "r") as f:
+    API_KEY = f.read().strip()
 team = "frc3937"
 
 HEADERS = {
