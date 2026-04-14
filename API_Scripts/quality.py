@@ -1,10 +1,9 @@
 import requests
 import csv
 import time
+import API_Scripts.util as util
 
-API_KEY = ""
-with open("key.txt", "r") as f:
-    API_KEY = f.read().strip()
+API_KEY = util.get_api_key()
 BASE_URL = "https://www.thebluealliance.com/api/v3"
 
 HEADERS = {

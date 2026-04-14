@@ -1,10 +1,9 @@
 import requests
 import csv
-import util
+import API_Scripts.util as util
 
 
 BASE_URL = "https://www.thebluealliance.com/api/v3"
-API_KEY = ""
 API_KEY = util.get_api_key()
 team = "frc3937"
 
