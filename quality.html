@@ -61,6 +61,10 @@
         font-size: 1rem;
     }
 
+    .team-3937 td {
+        color: #ef4444;
+    }
+
     .error {
         color: #f87171;
         margin-top: 20px;
@@ -133,6 +137,10 @@ function displayLeaderboard(teams) {
 
     teams.forEach(team => {
         const tr = document.createElement('tr');
+
+        if (team.team === '3937') {
+            tr.classList.add('team-3937');
+        }
 
         tr.innerHTML = `
             <td>${team.rank}</td>
