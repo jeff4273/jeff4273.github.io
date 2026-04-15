@@ -1,11 +1,11 @@
 import time
 
 import requests
-import key
+import api_key
 
 
 BASE_URL = "https://www.thebluealliance.com/api/v3"
-API_KEY = key.get_api_key()
+API_KEY = api_key.get_api_key()
 
 HEADERS = {
     "X-TBA-Auth-Key": API_KEY

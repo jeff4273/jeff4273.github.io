@@ -1,9 +1,9 @@
 import csv
-import API
-from award_type import AWARD_TYPES
+import api_client
+from award_types import AWARD_TYPES
 
 def count_quality_awards(team_key):
-    awards = API.get_awards_from_team(team_key)
+    awards = api_client.get_awards_from_team(team_key)
     #print(awards)
     count = 0
     for award in awards:
@@ -15,7 +15,7 @@ def count_quality_awards(team_key):
 
 
 def main():
-    teams = API.get_all_teams()
+    teams = api_client.get_all_teams()
 
     results = []
 
