@@ -1,151 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FRC Quality Awards Leaderboard</title>
-
-<style>
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #0f172a, #1e293b);
-        color: #f1f5f9;
-    }
-
-    .container {
-        max-width: 900px;
-        margin: 50px auto;
-        padding: 20px;
-        text-align: center;
-    }
-
-    h1 {
-        margin-bottom: 5px;
-    }
-
-    .subtitle {
-        color: #94a3b8;
-        margin-bottom: 30px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #1e293b;
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    th, td {
-        padding: 12px 15px;
-    }
-
-    th {
-        background: #334155;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 1px;
-    }
-
-    tr:nth-child(even) {
-        background: #273549;
-    }
-
-    tr:hover {
-        background: #3b4a63;
-        transition: 0.2s;
-    }
-
-    td {
-        font-size: 1rem;
-    }
-
-    .error {
-        color: #f87171;
-        margin-top: 20px;
-    }
-</style>
-</head>
-
-<body>
-
-<div class="container">
-    <h1>🏆 FRC Quality Awards Leaderboard</h1>
-    <p class="subtitle">Ranking teams by total quality awards</p>
-
-    <table id="leaderboard">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Team</th>
-                <th>Awards</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-
-    <p id="error" class="error"></p>
-</div>
-
-<script>
-async function loadCSV() {
-    try {
-        const response = await fetch('data.csv');
-
-        if (!response.ok) {
-            throw new Error("Could not load data.csv");
+    <style>
+        /* Existing styles */
+        tr {
+            transition: background-color 0.3s;
         }
+        tr:hover {
+            background-color: lightgray;
+        }
+        /* New style for team 3937 */
+        .team-3937 {
+            color: red; /* or background-color: red; */
+        }
+    </style>
+    <script>
+        function displayLeaderboard(teams) {
+            const tableBody = document.getElementById('leaderboard');
+            tableBody.innerHTML = '';
 
-        const text = await response.text();
-        const teams = parseCSV(text);
-        displayLeaderboard(teams);
+            teams.forEach(team => {
+                const row = document.createElement('tr');
 
-    } catch (err) {
-        document.getElementById('error').textContent =
-            "Error loading CSV. Make sure data.csv is in the repo root.";
-        console.error(err);
-    }
-}
+                // Add relevant class for team 3937
+                if (team.team === '3937' || team.team === 3937) {
+                    row.classList.add('team-3937');
+                }
 
-function parseCSV(text) {
-    const rows = text.trim().split('\n').slice(1);
-    let teams = [];
-
-    rows.forEach(row => {
-        const [rank, team, awards] = row.split(',');
-
-        if (rank && team && awards) {
-            teams.push({
-                rank: parseInt(rank.trim()),
-                team: team.trim(),
-                awards: parseInt(awards.trim())
+                row.innerHTML = `<td>${team.name}</td><td>${team.score}</td>`;
+                tableBody.appendChild(row);
             });
         }
-    });
-
-    return teams; // Already sorted in CSV, no need to sort
-}
-
-function displayLeaderboard(teams) {
-    const tbody = document.querySelector('#leaderboard tbody');
-    tbody.innerHTML = '';
-
-    teams.forEach(team => {
-        const tr = document.createElement('tr');
-
-        tr.innerHTML = `
-            <td>${team.rank}</td>
-            <td>${team.team}</td>
-            <td>${team.awards}</td>
-        `;
-
-        tbody.appendChild(tr);
-    });
-}
-
-loadCSV();
-</script>
-
+    </script>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Team Name</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody id='leaderboard'>
+            <!-- Dynamic rows will be added here -->
+        </tbody>
+    </table>
 </body>
 </html>
