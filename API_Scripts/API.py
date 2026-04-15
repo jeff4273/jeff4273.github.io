@@ -21,6 +21,16 @@ def get_years_active(team_key):
 
     return response.json()
 
+def get_team_info(team_key):
+    url = f"{BASE_URL}/team/{team_key}"
+    response = requests.get(url, headers=HEADERS)
+
+    if response.status_code != 200:
+        print(f"Error fetching team info for {team_key}")
+        return 0
+
+    return response.json()
+
 def get_matches_from_year_simple(team_key, year):
     url = f"{BASE_URL}/team/{team_key}/matches/{year}/simple"
     response = requests.get(url, headers=HEADERS)
@@ -37,6 +47,16 @@ def get_awards_from_team(team_key):
 
     if response.status_code != 200:
         print(f"Error fetching awards for {team_key}")
+        return 0
+
+    return response.json()
+
+def get_awards_from_event(event_key):
+    url = f"{BASE_URL}/event/{event_key}/awards"
+    response = requests.get(url, headers=HEADERS)
+
+    if response.status_code != 200:
+        print(f"Error fetching awards for {event_key}")
         return 0
 
     return response.json()
