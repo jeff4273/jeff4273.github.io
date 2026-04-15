@@ -59,9 +59,55 @@
         .nav-button:hover {
             background: #764ba2;
         }
+
+        .startup-popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .popup-banner {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            color: #222;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 10px 16px;
+            border-radius: 999px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            max-width: calc(100% - 40px);
+        }
+
+        .startup-popup.hidden {
+            display: none;
+        }
+
+        .popup-image {
+            display: block;
+            max-width: min(92vw, 900px);
+            max-height: 88vh;
+            width: auto;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
     </style>
 </head>
 <body>
+    <div id="startupPopup" class="startup-popup" aria-label="Startup image popup">
+        <p class="popup-banner">Click anywhere to make this go away</p>
+        <img src="image.png" alt="Startup image" class="popup-image">
+    </div>
+
     <div class="container">
         <h1>Breakaway Facts</h1>
         <div class="button-group">
@@ -69,5 +115,21 @@
             <a href="redVSblue.html" class="nav-button">Red vs Blue</a>
         </div>
     </div>
+
+    <script>
+        const startupPopup = document.getElementById("startupPopup");
+
+        function hideStartupPopup() {
+            startupPopup.classList.add("hidden");
+        }
+
+        startupPopup.addEventListener("click", hideStartupPopup);
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                hideStartupPopup();
+            }
+        });
+    </script>
 </body>
 </html>
