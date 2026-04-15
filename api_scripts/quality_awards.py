@@ -9,7 +9,7 @@ def count_quality_awards(team_key):
     for award in awards:
         if award["award_type"] == AWARD_TYPES["QUALITY"]:  
             count += 1
-            print(count)
+            #print(count)
 
     return count
 
@@ -41,7 +41,6 @@ def main():
             writer.writerow([rank, team_number, count])
 
     print("Done! Saved to frc_quality_awards_ranking.csv")
-
 
 if __name__ == "__main__":
     main()
