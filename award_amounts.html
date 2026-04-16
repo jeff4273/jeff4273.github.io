@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRC Quality Awards Leaderboard</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        color: #f1f5f9;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    h1 {
+        margin-bottom: 5px;
+    }
+
+    .subtitle {
+        color: #94a3b8;
+        margin-bottom: 16px;
+    }
+
+    .controls {
+        margin-bottom: 18px;
+    }
+
+    select {
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #475569;
+        background: #1e293b;
+        color: #f1f5f9;
+        font-size: 1rem;
+        max-width: 100%;
+    }
+
+    .jump-btn {
+        margin-left: 10px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #475569;
+        background: #0f172a;
+        color: #f1f5f9;
+        cursor: pointer;
+    }
+
+    .jump-btn:hover {
+        background: #1d4ed8;
+    }
+
+    .award-name {
+        margin: 10px 0 16px;
+        color: #cbd5e1;
+        font-weight: 600;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #1e293b;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th, td {
+        padding: 12px 15px;
+    }
+
+    th {
+        background: #334155;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+    }
+
+    tr:nth-child(even) {
+        background: #273549;
+    }
+
+    tr:hover {
+        background: #3b4a63;
+        transition: 0.2s;
+    }
+
+    td {
+        font-size: 1rem;
+    }
+
+    .team-3937 td {
+        color: #ef4444;
+    }
+
+    .team-3937 {
+        outline: 2px solid #ef4444;
+        outline-offset: -2px;
+    }
+
+    .error {
+        color: #f87171;
+        margin-top: 20px;
+    }
+
+    .top-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        width: 48px;
+        height: 48px;
+        border: none;
+        border-radius: 50%;
+        background: #1d4ed8;
+        color: #ffffff;
+        font-size: 1.5rem;
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+        z-index: 1000;
+    }
+
+    .top-btn:hover {
+        background: #2563eb;
+    }
+</style>
+</head>
+
+<body>
+<div class="container">
+    <h1>🏆 FRC Awards Leaderboard</h1>
+    <p class="subtitle">Rank teams by any award column</p>
+
+    <div class="controls">
+        <select id="awardSelect"></select>
+        <button id="jump3937" class="jump-btn" type="button">Jump to Team 3937</button>
+    </div>
+
+    <p id="awardName" class="award-name"></p>
+
+    <table id="csvTable">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+
+    <p id="error" class="error"></p>
+</div>
+
+<button id="topBtn" class="top-btn" type="button" aria-label="Scroll to top">↑</button>
+
+<script>
+let csvData = [];
+let headers = [];
+
+document.getElementById('topBtn').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+document.getElementById('jump3937').addEventListener('click', () => {
+    const row = document.querySelector('tr.team-3937');
+    if (row) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        row.classList.add('team-3937');
+    }
+});
+
+async function loadCSV() {
+    try {
+        const response = await fetch('frc_award_counts.csv');
+        if (!response.ok) throw new Error('Could not load frc_award_counts.csv');
+
+        const text = await response.text();
+        csvData = parseCSV(text.trim());
+
+        if (!csvData.length) throw new Error('CSV is empty');
+
+        headers = csvData[0].map(h => h.trim());
+        setupAwardSelect();
+        renderLeaderboard(document.getElementById('awardSelect').value || headers[0]);
+    } catch (err) {
+        document.getElementById('error').textContent =
+            'Error loading CSV. Serve this page over http://localhost, not file://';
+        console.error(err);
+    }
+}
+
+function setupAwardSelect() {
+    const select = document.getElementById('awardSelect');
+    select.innerHTML = '';
+
+    headers
+        .filter(h => h !== 'Team_Number')
+        .forEach(header => {
+            const option = document.createElement('option');
+            option.value = header;
+            option.textContent = header;
+            select.appendChild(option);
+        });
+
+    select.addEventListener('change', () => renderLeaderboard(select.value));
+}
+
+function renderLeaderboard(awardHeader) {
+    const awardIndex = headers.indexOf(awardHeader);
+    const teamIndex = headers.indexOf('Team_Number');
+    const table = document.getElementById('csvTable');
+    const thead = table.querySelector('thead');
+    const tbody = table.querySelector('tbody');
+    const awardName = document.getElementById('awardName');
+
+    if (awardIndex === -1 || teamIndex === -1) return;
+
+    const rows = csvData.slice(1)
+        .map(row => ({
+            team: (row[teamIndex] ?? '').trim(),
+            amount: Number((row[awardIndex] ?? '0').trim()) || 0
+        }))
+        .sort((a, b) => b.amount - a.amount || a.team.localeCompare(b.team, undefined, { numeric: true }));
+
+    const ranked = [];
+    let currentRank = 0;
+
+    rows.forEach((row, index) => {
+        if (index === 0 || row.amount < rows[index - 1].amount) {
+            currentRank = index + 1;
+        }
+        ranked.push({ rank: currentRank, ...row });
+    });
+
+    thead.innerHTML = `
+        <tr>
+            <th>Rank</th>
+            <th>Team</th>
+            <th>Amount</th>
+        </tr>
+    `;
+
+    tbody.innerHTML = ranked.map(row => `
+        <tr class="${row.team === '3937' ? 'team-3937' : ''}">
+            <td>${row.rank}</td>
+            <td>${escapeHTML(row.team)}</td>
+            <td>${row.amount}</td>
+        </tr>
+    `).join('');
+
+    awardName.textContent = `Ranking by: ${awardHeader}`;
+}
+
+function parseCSV(text) {
+    const rows = [];
+    let row = [];
+    let cell = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"' && inQuotes && next === '"') {
+            cell += '"';
+            i++;
+        } else if (char === '"') {
+            inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+            row.push(cell);
+            cell = '';
+        } else if ((char === '\n' || char === '\r') && !inQuotes) {
+            if (char === '\r' && next === '\n') i++;
+            row.push(cell);
+            if (row.length > 1 || row[0].trim() !== '') rows.push(row);
+            row = [];
+            cell = '';
+        } else {
+            cell += char;
+        }
+    }
+
+    if (cell.length > 0 || row.length > 0) {
+        row.push(cell);
+        if (row.length > 1 || row[0].trim() !== '') rows.push(row);
+    }
+
+    return rows;
+}
+
+function escapeHTML(value) {
+    return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+}
+
+loadCSV();
+</script>
+
+</body>
+</html>
