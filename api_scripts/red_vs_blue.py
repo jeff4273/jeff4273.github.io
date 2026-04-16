@@ -1,5 +1,5 @@
 import csv
-import api_client
+import tba_api.api_client as api_client
 
 team = "frc3937"
 

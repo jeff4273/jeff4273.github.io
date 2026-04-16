@@ -1,7 +1,7 @@
 import time
 
 import requests
-import api_key
+import tba_api.api_key as api_key
 
 
 BASE_URL = "https://www.thebluealliance.com/api/v3"

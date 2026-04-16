@@ -1,8 +1,5 @@
-import api_client
-import api_key
-from award_types import AWARD_TYPES
-
-API_KEY = api_key.get_api_key()
+import tba_api.api_client as api_client
+from tba_api.award_types import AWARD_TYPES
 
 #years = ["2007la", "2008la", "2009la", "2010la", "2011la", "2012la", "2013lake","2014lake","2015lake","2016lake", "2017lake", "2018lake", "2019lake", "2020lake", "2022lake", "2023lake", "2024lake", "2025lake", "2026lake"]
 years = ["2013arfa", "2014arfa", "2015arfa", "2016arlr", "2017arli", "2018arli", "2019arli", "2020arli", "2022arli", "2023arli", "2024arli", "2025arli", "2026arli"]
