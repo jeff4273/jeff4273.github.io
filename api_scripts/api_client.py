@@ -12,6 +12,10 @@ HEADERS = {
 }
 
 def get_years_active(team_key):
+    if not valid_team_key(team_key):
+        print(f"Invalid team key: {team_key}")
+        return 0
+
     url = f"{BASE_URL}/team/{team_key}/years_participated"
     response = requests.get(url, headers=HEADERS)
 
@@ -22,6 +26,10 @@ def get_years_active(team_key):
     return response.json()
 
 def get_team_info(team_key):
+    if not valid_team_key(team_key):
+        print(f"Invalid team key: {team_key}")
+        return 0
+
     url = f"{BASE_URL}/team/{team_key}"
     response = requests.get(url, headers=HEADERS)
 
@@ -32,6 +40,10 @@ def get_team_info(team_key):
     return response.json()
 
 def get_matches_from_year_simple(team_key, year):
+    if not valid_team_key(team_key):
+        print(f"Invalid team key: {team_key}")
+        return 0
+
     url = f"{BASE_URL}/team/{team_key}/matches/{year}/simple"
     response = requests.get(url, headers=HEADERS)
 
@@ -42,6 +54,10 @@ def get_matches_from_year_simple(team_key, year):
     return response.json()
 
 def get_awards_from_team(team_key):
+    if not valid_team_key(team_key):
+        print(f"Invalid team key: {team_key}")
+        return 0
+
     url = f"{BASE_URL}/team/{team_key}/awards"
     response = requests.get(url, headers=HEADERS)
 
@@ -60,6 +76,7 @@ def get_awards_from_event(event_key):
         return 0
 
     return response.json()
+
 
 def get_all_teams():
     teams = []
@@ -84,3 +101,8 @@ def get_all_teams():
         time.sleep(0.2)  
 
     return teams
+
+def valid_team_key(team_key):
+    if not team_key.startswith("frc"):
+        return False
+    return True
