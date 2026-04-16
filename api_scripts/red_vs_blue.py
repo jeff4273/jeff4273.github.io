@@ -1,29 +1,9 @@
-import requests
 import csv
-import api_key
+import api_client
 
-
-BASE_URL = "https://www.thebluealliance.com/api/v3"
-API_KEY = api_key.get_api_key()
 team = "frc3937"
 
-HEADERS = {
-    "X-TBA-Auth-Key": API_KEY
-}
-
-def get_years_active(team_key):
-    url = f"{BASE_URL}/team/{team_key}/years_participated"
-    response = requests.get(url, headers=HEADERS)
-
-    return response.json()
-
-def get_matches_from_year(team_key, year):
-    url = f"{BASE_URL}/team/{team_key}/matches/{year}/simple"
-    response = requests.get(url, headers=HEADERS)
-
-    return response.json()
-
-years = get_years_active(team)
+years = api_client.get_years_active(team)
 
 for year in years:
     redWins = 0
@@ -33,7 +13,7 @@ for year in years:
     blueTies = 0
     redTies = 0
 
-    matches = get_matches_from_year(team, year)
+    matches = api_client.get_matches_from_year_simple(team, year)
     for match in matches:
         if team in match["alliances"]["red"]["team_keys"]:
             if match["winning_alliance"] == "red":
@@ -50,7 +30,7 @@ for year in years:
             else:
                 blueTies += 1
     print(f"{year}: Red Wins: {redWins}, Red Losses: {redLosses}, Red Ties: {redTies}, Blue Wins: {blueWins}, Blue Losses: {blueLosses}, Blue Ties: {blueTies}")
-    #Write to csv
+
     with open('red_vs_blue.csv', mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([year, redWins, redLosses, redTies, blueWins, blueLosses, blueTies])
