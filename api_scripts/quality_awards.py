@@ -1,6 +1,6 @@
 import csv
-import API_Scripts.tba_api.api_client as api_client
-from API_Scripts.tba_api.award_types import AWARD_TYPES
+import tba_api.api_client as api_client
+from tba_api.award_types import AWARD_TYPES
 
 def count_quality_awards(team_key):
     awards = api_client.get_awards_from_team(team_key)
