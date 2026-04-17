@@ -7,16 +7,14 @@ class TBAClient:
     BASE_URL = "https://www.thebluealliance.com/api/v3"
     API_KEY = api_key.get_api_key()
 
-    HEADERS = {
-        "X-TBA-Auth-Key": API_KEY
-    }
-    
+    HEADERS = {"X-TBA-Auth-Key": API_KEY}
+
     def __init__(self):
         self.session = requests.Session()
         self.session.headers.update(self.HEADERS)
 
 
-    def get_years_active(self,team_key):
+    def get_years_active(self, team_key):
         if not self.valid_team_key(team_key):
             print(f"Invalid team key: {team_key}")
             return 0
@@ -103,11 +101,9 @@ class TBAClient:
             print(f"Fetched page {page}, total teams: {len(teams)}")
 
             page += 1
-            time.sleep(0.2)  
+            time.sleep(0.2)
 
         return teams
 
     def valid_team_key(self, team_key):
-        if not team_key.startswith("frc"):
-            return False
-        return True
+        return team_key.startswith("frc")

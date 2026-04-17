@@ -12,7 +12,7 @@ for team in teams:
     awards = client.get_awards_from_team(team['key'])
 
     row = {key: 0 for key in AWARD_TYPES.keys()}
-    row["Team_Number"] = int(team['key'][3:])  # convert frcXXXX → XXXX
+    row["Team_Number"] = int(team["key"][3:])
 
     for award in awards:
         award_type = award["award_type"]
@@ -22,7 +22,7 @@ for team in teams:
 
     if row["Team_Number"] % 100 == 0:
         print(row)
-        
+
     rows.append(row)
 
 df = pd.DataFrame(rows)

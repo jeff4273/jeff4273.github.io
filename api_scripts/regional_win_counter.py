@@ -9,9 +9,8 @@ results = {}
 for year in years:
     data = api_client.get_awards_from_event(year)
 
-    #print(data)
     for award in data:
-        if award['award_type'] == AWARD_TYPES["WINNER"]:  
+        if award['award_type'] == AWARD_TYPES["WINNER"]:
             print(award)
             for team in award['recipient_list']:
                 team_num = team['team_key']

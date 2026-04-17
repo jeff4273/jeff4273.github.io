@@ -4,12 +4,10 @@ from tba_api.award_types import AWARD_TYPES
 
 def count_quality_awards(team_key):
     awards = api_client.get_awards_from_team(team_key)
-    #print(awards)
     count = 0
     for award in awards:
         if award["award_type"] == AWARD_TYPES["QUALITY"]:  
             count += 1
-            #print(count)
 
     return count
 
@@ -29,7 +27,6 @@ def main():
 
         if i % 100 == 0:
             print(f"{i+1}/{len(teams)} - Team {team_number}: {count}")
-
 
     results.sort(key=lambda x: x[1], reverse=True)
 
