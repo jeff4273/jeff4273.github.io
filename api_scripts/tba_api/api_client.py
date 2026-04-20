@@ -79,6 +79,16 @@ class TBAClient:
             return 0
 
         return response.json()
+    
+    def get_event_info_simple(self, event_key):
+        url = f"{self.BASE_URL}/event/{event_key}/simple"
+        response = self.session.get(url)
+
+        if response.status_code != 200:
+            print(f"Error fetching event info for {event_key}")
+            return 0
+
+        return response.json()
 
 
     def get_all_teams(self):
