@@ -13,7 +13,7 @@ class TBAClient:
         self.session = requests.Session()
         self.session.headers.update(self.HEADERS)
 
-
+    # Team Endpoints
     def get_years_active(self, team_key):
         if not self.valid_team_key(team_key):
             print(f"Invalid team key: {team_key}")
@@ -69,7 +69,22 @@ class TBAClient:
             return 0
 
         return response.json()
+    
+    def get_events_from_team(self, team_key):
+        if not self.valid_team_key(team_key):
+            print(f"Invalid team key: {team_key}")
+            return 0
 
+        url = f"{self.BASE_URL}/team/{team_key}/events"
+        response = self.session.get(url)
+
+        if response.status_code != 200:
+            print(f"Error fetching events for {team_key}")
+            return 0
+
+        return response.json()
+
+    # Event Endpoints
     def get_awards_from_event(self, event_key):
         url = f"{self.BASE_URL}/event/{event_key}/awards"
         response = self.session.get(url)
@@ -89,8 +104,39 @@ class TBAClient:
             return 0
 
         return response.json()
+    
+    def get_teams_from_event_simple(self, event_key):
+        url = f"{self.BASE_URL}/event/{event_key}/teams/simple"
+        response = self.session.get(url)
+
+        if response.status_code != 200:
+            print(f"Error fetching teams for {event_key}")
+            return 0
+
+        return response.json()
+    
+    def get_rankings_from_event(self, event_key):
+        url = f"{self.BASE_URL}/event/{event_key}/rankings"
+        response = self.session.get(url)
+
+        if response.status_code != 200:
+            print(f"Error fetching rankings for {event_key}")
+            return 0
+
+        return response.json()
+    
+    def get_events_from_year(self, year):
+        url = f"{self.BASE_URL}/events/{year}"
+        response = self.session.get(url)
+
+        if response.status_code != 200:
+            print(f"Error fetching events for {year}")
+            return 0
+
+        return response.json()
 
 
+    # Misc Endpoints
     def get_all_teams(self):
         teams = []
         page = 0
@@ -111,9 +157,10 @@ class TBAClient:
             print(f"Fetched page {page}, total teams: {len(teams)}")
 
             page += 1
-            time.sleep(0.2)
+            time.sleep(0.05)
 
         return teams
 
+    # Helper Methods    
     def valid_team_key(self, team_key):
         return team_key.startswith("frc")
