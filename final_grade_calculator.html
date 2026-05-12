@@ -73,6 +73,24 @@
             color: #222;
             min-height: 24px;
         }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -12px;
+            opacity: 0.9;
+            pointer-events: none;
+            animation: fall 1.8s linear forwards;
+            z-index: 9999;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -106,6 +124,22 @@
         const calculateButton = document.getElementById("calculate");
         const QUARTER_WEIGHT = 2;
         const TOTAL_WEIGHT = 5;
+        const CONFETTI_COLORS = ["#ff6b6b", "#ffd93d", "#6bcB77", "#4d96ff", "#c77dff"];
+
+        function launchConfetti() {
+            const pieceCount = 70;
+            for (let i = 0; i < pieceCount; i += 1) {
+                const piece = document.createElement("div");
+                piece.className = "confetti";
+                piece.style.left = `${Math.random() * 100}vw`;
+                piece.style.backgroundColor = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+                piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+                piece.style.animationDelay = `${Math.random() * 0.5}s`;
+                piece.style.animationDuration = `${1.2 + Math.random() * 1.2}s`;
+                document.body.appendChild(piece);
+                piece.addEventListener("animationend", () => piece.remove());
+            }
+        }
 
         calculateButton.addEventListener("click", () => {
             const q1 = Number(q1Input.value);
@@ -126,6 +160,9 @@
 
             const calculatedGrade = ((q1 * QUARTER_WEIGHT + q2 * QUARTER_WEIGHT) + finalExamGrade) / TOTAL_WEIGHT;
             resultEl.textContent = `Calculated Grade: ${calculatedGrade.toFixed(2)}`;
+            if (calculatedGrade > 90) {
+                launchConfetti();
+            }
         });
     </script>
 </body>
