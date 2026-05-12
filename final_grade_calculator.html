@@ -90,8 +90,8 @@
         </div>
 
         <div class="field">
-            <label for="final">Final Grade</label>
-            <input id="final" type="number" step="any" required>
+            <label for="finalExam">Final Exam Grade</label>
+            <input id="finalExam" type="number" step="any" required>
         </div>
 
         <button type="button" id="calculate">Calculate</button>
@@ -101,28 +101,30 @@
     <script>
         const q1Input = document.getElementById("q1");
         const q2Input = document.getElementById("q2");
-        const finalInput = document.getElementById("final");
+        const finalExamInput = document.getElementById("finalExam");
         const resultEl = document.getElementById("result");
         const calculateButton = document.getElementById("calculate");
+        const QUARTER_WEIGHT = 2;
+        const TOTAL_WEIGHT = 5;
 
         calculateButton.addEventListener("click", () => {
             const q1 = Number(q1Input.value);
             const q2 = Number(q2Input.value);
-            const finalGrade = Number(finalInput.value);
+            const finalExamGrade = Number(finalExamInput.value);
 
             if (
                 Number.isNaN(q1) ||
                 Number.isNaN(q2) ||
-                Number.isNaN(finalGrade) ||
+                Number.isNaN(finalExamGrade) ||
                 q1Input.value === "" ||
                 q2Input.value === "" ||
-                finalInput.value === ""
+                finalExamInput.value === ""
             ) {
                 resultEl.textContent = "Please enter all three grades.";
                 return;
             }
 
-            const calculatedGrade = ((q1 * 2 + q2 * 2) + finalGrade) / 5;
+            const calculatedGrade = ((q1 * QUARTER_WEIGHT + q2 * QUARTER_WEIGHT) + finalExamGrade) / TOTAL_WEIGHT;
             resultEl.textContent = `Calculated Grade: ${calculatedGrade.toFixed(2)}`;
         });
     </script>
